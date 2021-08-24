@@ -5,7 +5,8 @@ pipeline{
       steps{
         script{
           docker.withRegistry('https://nexus.intranda.com:4443','jenkins-docker'){
-            image = docker.build("goobi-viewer-solr:${env.BUILD_ID}_${env.GIT_COMMIT}")
+            dockerimage = docker.build("goobi-viewer-solr:${env.BUILD_ID}_${env.GIT_COMMIT}")
+            dockerimage_public = docker.build("intranda/goobi-viewer-solr:${env.BUILD_ID}_${env.GIT_COMMIT}")
           }
         }
       }
@@ -17,8 +18,35 @@ pipeline{
       steps{
         script{
           docker.withRegistry('https://nexus.intranda.com:4443','jenkins-docker'){
-            image.push("${env.BUILD_ID}_${env.GIT_COMMIT}")
-            image.push("latest")
+            dockerimage.push("${env.BUILD_ID}_${env.GIT_COMMIT}")
+            dockerimage.push("latest")
+          }
+        }
+      }
+    }
+    stage('publish develop image to Docker Hub'){
+      agent any
+      when {
+        branch 'develop'
+      }
+      steps{
+        script{
+          docker.withRegistry('','0b13af35-a2fb-41f7-8ec7-01eaddcbe99d'){
+            dockerimage_public.push("${env.BRANCH_NAME}")
+          }
+        }
+      }
+    }
+    stage('publish production image to Docker Hub'){
+      agent any
+      when {
+        branch 'master'
+      }
+      steps{
+        script{
+          docker.withRegistry('','0b13af35-a2fb-41f7-8ec7-01eaddcbe99d'){
+            dockerimage_public.push("${env.TAG_NAME}")
+            dockerimage_public.push("latest")
           }
         }
       }

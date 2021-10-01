@@ -12,7 +12,18 @@ pipeline{
         }
       }
     }
-    stage('publish images'){
+    stage('publish image to internal repository'){
+      agent any
+      steps{
+        script {
+          docker.withRegistry('https://nexus.intranda.com:4443','jenkins-docker'){
+            dockerimage.push("${env.BRANCH_NAME}-${env.BUILD_ID}_${env.GIT_COMMIT}")
+            dockerimage.push("${env.BRANCH_NAME}")
+          }
+        }
+      }
+    }
+    stage('publish production image to internal repository'){
       agent any
       when {
         branch 'master'
@@ -20,7 +31,6 @@ pipeline{
       steps{
         script{
           docker.withRegistry('https://nexus.intranda.com:4443','jenkins-docker'){
-            dockerimage.push("${env.BUILD_ID}_${env.GIT_COMMIT}")
             dockerimage.push("latest")
           }
         }
@@ -47,7 +57,6 @@ pipeline{
       steps{
         script{
           docker.withRegistry('','0b13af35-a2fb-41f7-8ec7-01eaddcbe99d'){
-            dockerimage_public.push("${env.TAG_NAME}")
             dockerimage_public.push("latest")
           }
         }

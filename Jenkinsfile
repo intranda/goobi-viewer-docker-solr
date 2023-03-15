@@ -25,7 +25,6 @@ pipeline{
       }
     }
     stage('publish develop image to Docker Hub'){
-      agent any
       when {
         branch 'develop'
       }
@@ -38,7 +37,6 @@ pipeline{
       }
     }
     stage('publish production image to Docker Hub'){
-      agent any
       when {
         branch 'master'
       }

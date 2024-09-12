@@ -36,7 +36,7 @@
 
 <!-- PLEASE ADD A CHECKBOX IN THE TICKET TO REMEMBER TO UPDATE THIS FILE IN THE
      GOOBI-VIEWER-DOCKER-SOLR REPOSITORY AS WELL -->
-<schema name="goobi_viewer-20230110" version="1.6">
+<schema name="goobi_viewer-20240626" version="1.6">
 
 
 
@@ -139,6 +139,7 @@
 	<field name="DMDID" type="string" indexed="true" stored="false" />
 	<field name="DOCSTRCT" type="string" indexed="true" stored="true" />
 	<field name="DOCTYPE" type="string" indexed="true" stored="true" />
+    <field name="EAD_NODE_ID" type="string" indexed="true" stored="true" />
 	<field name="EVENTDATE" type="string" indexed="true" stored="true" multiValued="true" />
 	<field name="EVENTDATESTART" type="string" indexed="true" stored="true" />
 	<field name="EVENTDATEEND" type="string" indexed="true" stored="true" />
@@ -242,6 +243,8 @@
     <dynamicField name="DOCSTRCT_*" type="string" indexed="true" stored="true" />
     <dynamicField name="CMS_TEXT_*" type="text_general_rev" indexed="true" stored="false" multiValued="true" />
     <dynamicField name="WKT_*" type="location_rpt" indexed="true" stored="true" multiValued="true" />
+    <dynamicField name="SEARCHTERMS_*" type="search_field_rev" indexed="true" stored="true" />
+    <dynamicField name="SUPERSEARCHTERMS_*" type="search_field_rev" indexed="true" stored="true" multiValued="true" />
 
 	<dynamicField name="random_*" type="random" />
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-sleep 5
+echo "Waiting for solr to start"
+wait-for-solr.sh --max-attempts 1000 --wait-seconds 2
 RESULT=$(curl -s http://localhost:8983/solr/admin/collections?action=list | grep "collection1")
 if [ -z $RESULT ]; then
     echo "Performing initial setup"

@@ -1,4 +1,3 @@
-
 FROM solr:9.5.0
 LABEL org.opencontainers.image.authors="Matthias Geerdsen <matthias.geerdsen@intranda.com>"
 LABEL org.opencontainers.image.source="https://github.com/intranda/goobi-viewer-docker-solr"
@@ -9,3 +8,5 @@ ADD https://raw.githubusercontent.com/locationtech/jts/master/LICENSE_EDLv1.txt 
 USER 0
 RUN chmod a+r /opt/solr/server/lib/jts-core-1.17.0.jar
 USER 8983
+COPY call_initial_setup.sh /docker-entrypoint-initdb.d/
+COPY initial_setup.sh /

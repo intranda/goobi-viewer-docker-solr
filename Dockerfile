@@ -9,4 +9,6 @@ USER 0
 RUN chmod a+r /opt/solr/server/lib/jts-core-1.17.0.jar
 USER 8983
 COPY call_initial_setup.sh /docker-entrypoint-initdb.d/
+COPY healthcheck.sh /
 COPY initial_setup.sh /
+HEALTHCHECK --interval=60s --timeout=15s --start-period=15s --retries=10 CMD [ "/healthcheck.sh" ]

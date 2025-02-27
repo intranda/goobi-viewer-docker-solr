@@ -1,4 +1,4 @@
-FROM solr:9.5.0
+FROM solr:9.8.0
 LABEL org.opencontainers.image.authors="Matthias Geerdsen <matthias.geerdsen@intranda.com>"
 LABEL org.opencontainers.image.source="https://github.com/intranda/goobi-viewer-docker-solr"
 LABEL org.opencontainers.image.description="Goobi viewer - preconfigured Apache Solr"

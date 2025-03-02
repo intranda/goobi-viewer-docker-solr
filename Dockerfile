@@ -7,6 +7,10 @@ ADD https://github.com/locationtech/jts/releases/download/1.17.0/jts-core-1.17.0
 ADD https://raw.githubusercontent.com/locationtech/jts/master/LICENSE_EDLv1.txt /opt/solr/licenses/jts-LICENSE_EDLv1.txt
 USER 0
 RUN chmod a+r /opt/solr/server/lib/jts-core-1.17.0.jar
+RUN apt-get update && apt-get install -y patch
+COPY patches/solr.in.sh.patch /tmp/
+RUN patch -l /etc/default/solr.in.sh < /tmp/solr.in.sh.patch
+RUN rm /tmp/solr.in.sh.patch
 USER 8983
 COPY call_initial_setup.sh /docker-entrypoint-initdb.d/
 COPY healthcheck.sh /

@@ -1,0 +1,56 @@
+@@ -32,7 +32,7 @@
+ #SOLR_START_WAIT="$SOLR_STOP_WAIT"
+ 
+ # Increase Java Heap as needed to support your indexing / query needs
+-#SOLR_HEAP="512m"
++SOLR_HEAP="2048m"
+ 
+ # Expert: If you want finer control over memory options, specify them directly
+ # Comment out SOLR_HEAP if you are using this though, that takes precedence
+@@ -50,20 +50,14 @@
+ #  -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintTenuringDistribution -XX:+PrintGCApplicationStoppedTime"
+ 
+ # These GC settings have shown to work well for a number of common Solr workloads
+-#GC_TUNE=" \
+-#-XX:+ExplicitGCInvokesConcurrent \
+-#-XX:SurvivorRatio=4 \
+-#-XX:TargetSurvivorRatio=90 \
+-#-XX:MaxTenuringThreshold=8 \
+-#-XX:+UseConcMarkSweepGC \
+-#-XX:ConcGCThreads=4 -XX:ParallelGCThreads=4 \
+-#-XX:+CMSScavengeBeforeRemark \
+-#-XX:PretenureSizeThreshold=64m \
+-#-XX:+UseCMSInitiatingOccupancyOnly \
+-#-XX:CMSInitiatingOccupancyFraction=50 \
+-#-XX:CMSMaxAbortablePrecleanTime=6000 \
+-#-XX:+CMSParallelRemarkEnabled \
+-#-XX:+ParallelRefProcEnabled        etc.
++GC_TUNE=" \
++-XX:+ExplicitGCInvokesConcurrent \
++-XX:SurvivorRatio=4 \
++-XX:TargetSurvivorRatio=90 \
++-XX:MaxTenuringThreshold=8 \
++-XX:ConcGCThreads=4 -XX:ParallelGCThreads=4 \
++-XX:PretenureSizeThreshold=64m \
++-XX:+ParallelRefProcEnabled"
+ 
+ # Set the ZooKeeper connection string if using an external ZooKeeper ensemble
+ # e.g. host1:2181,host2:2181/chroot
+@@ -129,7 +123,7 @@
+ 
+ # Changes the logging level. Valid values: ALL, TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF. Default is INFO
+ # This is an alternative to changing the rootLogger in log4j2.xml
+-#SOLR_LOG_LEVEL=INFO
++SOLR_LOG_LEVEL=ERROR
+ 
+ # Location where Solr should write logs to. Absolute or relative to solr start dir
+ #SOLR_LOGS_DIR=logs
+@@ -293,7 +287,7 @@
+ # SOLR_OPTS="$SOLR_OPTS -Dlog4j2.formatMsgNoLookups=true"
+ 
+ # The bundled plugins in the "modules" folder can easily be enabled as a comma-separated list in SOLR_MODULES variable
+-# SOLR_MODULES=extraction,ltr
++SOLR_MODULES=analysis-extras
+ 
+ # Configure the default replica placement plugin to use if one is not configured in cluster properties
+ # See https://solr.apache.org/guide/solr/latest/configuration-guide/replica-placement-plugins.html for details

@@ -6,7 +6,7 @@ if [ -z $RESULT ]; then
     echo "Performing initial setup"
     while true; do
         echo "Trying to perform Solr configuration setup with zookeeper ..."
-        /opt/solr/bin/solr zk upconfig -z zookeeper -n goobiviewer -d /opt/goobiviewer
+        /opt/solr/bin/solr zk upconfig -n goobiviewer -d /opt/goobiviewer
 
         if [ $? -eq 0 ]; then
             echo "Solr configuration setup with zookeeper successfull!"

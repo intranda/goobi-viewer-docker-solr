@@ -42,3 +42,4 @@ volumes:
 ## Solr update instructions
 - Change version of Solr image in first line of `Dockerfile`.
 - Adapt Patches in `patches/` directory, if necessary.
+- For changes in `solr.in.sh.patch`, adapt the `Dockerfile` environment variables accordingly.

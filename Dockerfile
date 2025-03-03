@@ -10,8 +10,19 @@ USER 0
 RUN apt-get update && apt-get install -y patch
 RUN chmod a+r /opt/solr/server/lib/jts-core-1.17.0.jar
 
+ENV SOLR_HEAP="2048m"
+ENV GC_TUNE=" \
+    -XX:+ExplicitGCInvokesConcurrent \
+    -XX:SurvivorRatio=4 \
+    -XX:TargetSurvivorRatio=90 \
+    -XX:MaxTenuringThreshold=8 \
+    -XX:ConcGCThreads=4 -XX:ParallelGCThreads=4 \
+    -XX:PretenureSizeThreshold=64m \
+    -XX:+ParallelRefProcEnabled"
+ENV SOLR_LOG_LEVEL="ERROR"
+ENV SOLR_MODULES="analysis-extras"
+
 COPY patches/* /tmp/patches/
-RUN patch /etc/default/solr.in.sh < /tmp/patches/solr.in.sh.patch
 
 RUN mkdir -p /opt/goobiviewer
 RUN cp -r /opt/solr/server/solr/configsets/_default/conf /opt/goobiviewer/conf

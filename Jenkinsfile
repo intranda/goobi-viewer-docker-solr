@@ -1,8 +1,7 @@
 pipeline{
-  agent none
+  agent any
   stages{
     stage('build images'){
-      agent any
       steps{
         script{
           docker.withRegistry('https://nexus.intranda.com:4443','jenkins-docker'){
@@ -13,7 +12,6 @@ pipeline{
       }
     }
     stage('publish image to internal repository'){
-      agent any
       steps{
         script {
           docker.withRegistry('https://nexus.intranda.com:4443','jenkins-docker'){
@@ -24,7 +22,6 @@ pipeline{
       }
     }
     stage('publish production image to internal repository'){
-      agent any
       when {
         branch 'master'
       }
@@ -60,8 +57,7 @@ pipeline{
         }
       }
     }
-        stage('publish develop image to GitHub container registry'){
-      agent any
+    stage('publish develop image to GitHub container registry'){
       when {
         branch 'develop'
       }
@@ -74,7 +70,6 @@ pipeline{
       }
     }
     stage('publish production image to GitHub container registry'){
-      agent any
       when {
         branch 'master'
       }
@@ -89,9 +84,7 @@ pipeline{
   }
   post {
     always{
-      node(null) {
-        deleteDir()
-      }
+      deleteDir()
     }
     changed {
       emailext(

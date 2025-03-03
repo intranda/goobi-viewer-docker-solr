@@ -5,12 +5,21 @@ LABEL org.opencontainers.image.description="Goobi viewer - preconfigured Apache 
 
 ADD https://github.com/locationtech/jts/releases/download/1.17.0/jts-core-1.17.0.jar /opt/solr/server/lib/jts-core-1.17.0.jar
 ADD https://raw.githubusercontent.com/locationtech/jts/master/LICENSE_EDLv1.txt /opt/solr/licenses/jts-LICENSE_EDLv1.txt
+
 USER 0
-RUN chmod a+r /opt/solr/server/lib/jts-core-1.17.0.jar
 RUN apt-get update && apt-get install -y patch
-COPY patches/solr.in.sh.patch /tmp/
-RUN patch -l /etc/default/solr.in.sh < /tmp/solr.in.sh.patch
-RUN rm /tmp/solr.in.sh.patch
+RUN chmod a+r /opt/solr/server/lib/jts-core-1.17.0.jar
+
+COPY patches/* /tmp/patches/
+RUN patch /etc/default/solr.in.sh < /tmp/patches/solr.in.sh.patch
+
+RUN mkdir -p /opt/goobiviewer
+RUN cp -r /opt/solr/server/solr/configsets/_default/conf /opt/goobiviewer/conf
+RUN rm /opt/goobiviewer/conf/managed-schema.xml
+COPY config /opt/goobiviewer/conf
+RUN patch --output /opt/goobiviewer/conf/solrconfig.xml /opt/solr/server/solr/configsets/_default/conf/solrconfig.xml < /tmp/patches/solrconfig.xml.patch
+RUN rm -r /tmp/patches
+
 USER 8983
 COPY call_initial_setup.sh /docker-entrypoint-initdb.d/
 COPY healthcheck.sh /

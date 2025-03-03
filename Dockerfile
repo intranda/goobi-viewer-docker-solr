@@ -15,9 +15,10 @@ RUN patch /etc/default/solr.in.sh < /tmp/patches/solr.in.sh.patch
 
 RUN mkdir -p /opt/goobiviewer
 RUN cp -r /opt/solr/server/solr/configsets/_default/conf /opt/goobiviewer/conf
-RUN rm /opt/goobiviewer/conf/managed-schema.xml
 COPY config /opt/goobiviewer/conf
+RUN cat /opt/goobiviewer/conf/lang/stopwords_de.txt /opt/goobiviewer/conf/lang/stopwords_en.txt > /opt/goobiviewer/conf/lang/stopwords.txt
 RUN patch --output /opt/goobiviewer/conf/solrconfig.xml /opt/solr/server/solr/configsets/_default/conf/solrconfig.xml < /tmp/patches/solrconfig.xml.patch
+RUN rm /opt/goobiviewer/conf/managed-schema.xml
 RUN rm -r /tmp/patches
 
 USER 8983

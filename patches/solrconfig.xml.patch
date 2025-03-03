@@ -1,0 +1,26 @@
+@@ -36,6 +36,7 @@
+        affect both how text is indexed and queried.
+   -->
+   <luceneMatchVersion>9.11</luceneMatchVersion>
++  <schemaFactory class="ClassicIndexSchemaFactory"/>
+ 
+   <!-- Data Directory
+ 
+@@ -629,7 +630,7 @@
+   <!-- Shared parameters for multiple Request Handlers -->
+   <initParams path="/update/**,/query,/select,/spell">
+     <lst name="defaults">
+-      <str name="df">_text_</str>
++      <str name="df">DEFAULT</str>
+     </lst>
+   </initParams>
+ 
+@@ -907,7 +908,7 @@
+   
+ 
+   <!-- The update.autoCreateFields property can be turned to false to disable schemaless mode -->
+-  <updateRequestProcessorChain name="add-unknown-fields-to-the-schema" default="${update.autoCreateFields:true}"
++  <updateRequestProcessorChain name="add-unknown-fields-to-the-schema" default="${update.autoCreateFields:false}"
+            processor="uuid,remove-blank,field-name-mutating,max-fields,parse-boolean,parse-long,parse-double,parse-date,add-schema-fields">
+     <processor class="solr.LogUpdateProcessorFactory"/>
+     <processor class="solr.DistributedUpdateProcessorFactory"/>

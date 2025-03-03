@@ -1,11 +1,45 @@
 # solr-docker
-
 Docker image creation for Apache Solr including libraries as needed for the Goobi Viewer
 
-## Update instructions
-- Change Solr version in `Dockerfile`
-- Extract latest `solrconfig.xml` from Solr and apply necessary patches (adapt to version):
-```bash
-docker run -it solr:9.8.0 cat /opt/solr-9.8.0/server/solr/configsets/_default/conf/solrconfig.xml > goobiviewer/conf/solrconfig.xml
+## Usage
+In order to use this image, Zookeeper is required and needs to be configured via environment variables:
+```yml
+services:
+  solr:
+    image: ghcr.io/intranda/goobi-viewer-docker-solr
+    depends_on:
+      - zookeeper
+    restart: unless-stopped
+    environment:
+      ZK_HOST: zookeeper:2181 # This setting must match the zookeeper service name
+      TZ: Europe/Berlin
+      # for further configuration check documentation of official Solr docker image
+    volumes:
+      - type: volume
+        source: persistent-solr-data-volume
+        target: /var/solr
+    ports:
+      - 8983:8983
+
+  zookeeper:
+    image: zookeeper:3.9.3
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Berlin
+    volumes:
+      - type: volume
+        source: persistent-zookeeper-data-volume
+        target: /data
+
+volumes:
+  persistent-solr-data-volume:
+  persistent-zookeeper-data-volume:
 ```
-- Download latest [`schema.xml`](https://gitea.intranda.com/goobi-viewer/goobi-viewer-indexer/raw/branch/master/goobi-viewer-indexer/src/main/resources/other/schema.xml) and place it in `goobiviewer/conf`.
+
+## Schema update instructions
+- Make changes to the `config/schema.xml` as required.
+
+## Solr update instructions
+- Change version of Solr image in first line of `Dockerfile`.
+- Adapt Patches in `patches/` directory, if necessary.
+- For changes in `solr.in.sh.patch`, adapt the `Dockerfile` environment variables accordingly.

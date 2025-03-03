@@ -1,7 +1,7 @@
 # solr-docker
 Docker image creation for Apache Solr including libraries as needed for the Goobi Viewer
 
-## Scheam update instructions
+## Schema update instructions
 - Make changes to the `config/schema.xml` as required.
 
 ## Solr update instructions

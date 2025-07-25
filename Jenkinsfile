@@ -12,7 +12,7 @@ pipeline{
       agent any
       when {
         anyOf {
-          branch 'master'
+          tag "v*"
           branch 'develop'
           expression { return env.BRANCH_NAME =~ /_docker$/ }
         }
@@ -48,10 +48,7 @@ pipeline{
             # Tag logic
             TAGS=""
             if [ ! -z "$TAG_NAME" ]; then
-              TAGS="$TAGS -t $GHCR_IMAGE_BASE:$TAG_NAME -t $DOCKERHUB_IMAGE_BASE:$TAG_NAME -t $NEXUS_IMAGE_BASE:$TAG_NAME"
-            fi
-            if [ "$GIT_BRANCH" = "origin/master" ] || [ "$GIT_BRANCH" = "master" ]; then
-              TAGS="$TAGS -t $GHCR_IMAGE_BASE:latest -t $DOCKERHUB_IMAGE_BASE:latest -t $NEXUS_IMAGE_BASE:latest"
+              TAGS="$TAGS -t $GHCR_IMAGE_BASE:$TAG_NAME -t $DOCKERHUB_IMAGE_BASE:$TAG_NAME -t $NEXUS_IMAGE_BASE:$TAG_NAME -t $GHCR_IMAGE_BASE:latest -t $DOCKERHUB_IMAGE_BASE:latest -t $NEXUS_IMAGE_BASE:latest"
             elif [ "$GIT_BRANCH" = "origin/develop" ] || [ "$GIT_BRANCH" = "develop" ]; then
               TAGS="$TAGS -t $GHCR_IMAGE_BASE:develop -t $DOCKERHUB_IMAGE_BASE:develop -t $NEXUS_IMAGE_BASE:develop"
             elif echo "$GIT_BRANCH" | grep -q "_docker$"; then

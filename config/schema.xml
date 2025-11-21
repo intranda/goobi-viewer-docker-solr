@@ -36,7 +36,7 @@
 
 <!-- PLEASE ADD A CHECKBOX IN THE TICKET TO REMEMBER TO UPDATE THIS FILE IN THE
      GOOBI-VIEWER-DOCKER-SOLR REPOSITORY AS WELL -->
-<schema name="goobi_viewer-20251117" version="1.7">
+<schema name="goobi_viewer-20251121" version="1.7">
 
 
 
@@ -192,7 +192,7 @@
 	<!-- PARTNERID: DEPRECATED -->
 	<field name="PARTNERID" type="string" indexed="true" stored="true" />
 	<field name="PHYSID" type="string" indexed="true" stored="true" />
-	<field name="PI" type="text_untokenized_docs" indexed="true" stored="true" />
+	<field name="PI" type="string" indexed="true" stored="true" />
 	<field name="SORTINGTITLE" type="string" indexed="true" stored="false" />
 	<field name="SOURCEDOCFORMAT" type="string" indexed="true" stored="true" />
 	<field name="SUPERDEFAULT" type="search_field_rev" indexed="true" stored="false" multiValued="true" />
@@ -242,8 +242,8 @@
     <dynamicField name="WKT_*" type="location_rpt" indexed="true" stored="true" multiValued="true" />
     <dynamicField name="SEARCHTERMS_*" type="search_field_rev" indexed="true" stored="true" />
     <dynamicField name="SUPERSEARCHTERMS_*" type="search_field_rev" indexed="true" stored="true" multiValued="true" />
-    <dynamicField name="ID_*" type="text_untokenized_docs" indexed="true" stored="true" />
-    <dynamicField name="PI_*" type="text_untokenized_docs" indexed="true" stored="true" />
+    <dynamicField name="ID_*" type="text_untokenized" indexed="true" stored="true" />
+    <dynamicField name="PI_*" type="string" indexed="true" stored="true" />
 
 	<dynamicField name="random_*" type="random" />
 
@@ -485,30 +485,6 @@
 			</analyzer>
 		</fieldType>
 		
-		<fieldType name="text_untokenized_docs" class="solr.TextField"
-			sortMissingLast="true" indexOptions="DOCS">
-			<analyzer type="index">
-				<!-- KeywordTokenizer does no actual tokenizing, so the entire input
-					string is preserved as a single token -->
-				<tokenizer class="solr.KeywordTokenizerFactory" />
-				<!-- The LowerCase TokenFilter does what you expect, which can be when
-					you want your sorting to be case insensitive -->
-				<filter class="solr.LowerCaseFilterFactory" />
-				<!-- The TrimFilter removes any leading or trailing whitespace -->
-				<filter class="solr.TrimFilterFactory" />
-			</analyzer>
-			<analyzer type="query">
-				<!-- KeywordTokenizer does no actual tokenizing, so the entire input
-					string is preserved as a single token -->
-				<tokenizer class="solr.KeywordTokenizerFactory" />
-				<!-- The LowerCase TokenFilter does what you expect, which can be when
-					you want your sorting to be case insensitive -->
-				<filter class="solr.LowerCaseFilterFactory" />
-				<!-- The TrimFilter removes any leading or trailing whitespace -->
-				<filter class="solr.TrimFilterFactory" />
-			</analyzer>
-		</fieldType>
-
     <dynamicField name="*_phon_en" type="phonetic_en"  indexed="true"  stored="true"/>
     <fieldType name="phonetic_en" stored="false" indexed="true" class="solr.TextField" >
       <analyzer>

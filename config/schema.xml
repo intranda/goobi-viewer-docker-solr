@@ -36,7 +36,7 @@
 
 <!-- PLEASE ADD A CHECKBOX IN THE TICKET TO REMEMBER TO UPDATE THIS FILE IN THE
      GOOBI-VIEWER-DOCKER-SOLR REPOSITORY AS WELL -->
-<schema name="goobi_viewer-20250127" version="1.7">
+<schema name="goobi_viewer-20251117" version="1.7">
 
 
 
@@ -192,10 +192,7 @@
 	<!-- PARTNERID: DEPRECATED -->
 	<field name="PARTNERID" type="string" indexed="true" stored="true" />
 	<field name="PHYSID" type="string" indexed="true" stored="true" />
-	<field name="PI" type="string" indexed="true" stored="true" />
-	<field name="PI_ANCHOR" type="string" indexed="true" stored="true" />
-	<field name="PI_PARENT" type="string" indexed="true" stored="true" />
-	<field name="PI_TOPSTRUCT" type="string" indexed="true" stored="true" />
+	<field name="PI" type="text_untokenized_docs" indexed="true" stored="true" />
 	<field name="SORTINGTITLE" type="string" indexed="true" stored="false" />
 	<field name="SOURCEDOCFORMAT" type="string" indexed="true" stored="true" />
 	<field name="SUPERDEFAULT" type="search_field_rev" indexed="true" stored="false" multiValued="true" />
@@ -245,6 +242,8 @@
     <dynamicField name="WKT_*" type="location_rpt" indexed="true" stored="true" multiValued="true" />
     <dynamicField name="SEARCHTERMS_*" type="search_field_rev" indexed="true" stored="true" />
     <dynamicField name="SUPERSEARCHTERMS_*" type="search_field_rev" indexed="true" stored="true" multiValued="true" />
+    <dynamicField name="ID_*" type="text_untokenized_docs" indexed="true" stored="true" />
+    <dynamicField name="PI_*" type="text_untokenized_docs" indexed="true" stored="true" />
 
 	<dynamicField name="random_*" type="random" />
 
@@ -440,6 +439,8 @@
         <fieldType name="text_general_rev" class="solr.TextField"
             positionIncrementGap="100">
             <analyzer type="index">
+                <charFilter class="solr.MappingCharFilterFactory"
+                    mapping="mapping-ISOLatin1Accent.txt" />
                 <tokenizer class="solr.StandardTokenizerFactory" />
                 <filter class="solr.StopFilterFactory" ignoreCase="true"
                     words="lang/stopwords.txt" />
@@ -447,23 +448,45 @@
                 <filter class="solr.ReversedWildcardFilterFactory"
                     withOriginal="true" maxPosAsterisk="3" maxPosQuestion="2"
                     maxFractionAsterisk="0.33" />
-                <charFilter class="solr.MappingCharFilterFactory"
-                    mapping="mapping-ISOLatin1Accent.txt" />
             </analyzer>
             <analyzer type="query">
+                <charFilter class="solr.MappingCharFilterFactory"
+                    mapping="mapping-ISOLatin1Accent.txt" />
                 <tokenizer class="solr.StandardTokenizerFactory" />
                 <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt"
                     ignoreCase="true" expand="true" />
                 <filter class="solr.StopFilterFactory" ignoreCase="true"
                     words="lang/stopwords.txt" />
                 <filter class="solr.LowerCaseFilterFactory" />
-                <charFilter class="solr.MappingCharFilterFactory"
-                    mapping="mapping-ISOLatin1Accent.txt" />
             </analyzer>
         </fieldType>
 
 		<fieldType name="text_untokenized" class="solr.TextField"
 			sortMissingLast="true">
+			<analyzer type="index">
+				<!-- KeywordTokenizer does no actual tokenizing, so the entire input
+					string is preserved as a single token -->
+				<tokenizer class="solr.KeywordTokenizerFactory" />
+				<!-- The LowerCase TokenFilter does what you expect, which can be when
+					you want your sorting to be case insensitive -->
+				<filter class="solr.LowerCaseFilterFactory" />
+				<!-- The TrimFilter removes any leading or trailing whitespace -->
+				<filter class="solr.TrimFilterFactory" />
+			</analyzer>
+			<analyzer type="query">
+				<!-- KeywordTokenizer does no actual tokenizing, so the entire input
+					string is preserved as a single token -->
+				<tokenizer class="solr.KeywordTokenizerFactory" />
+				<!-- The LowerCase TokenFilter does what you expect, which can be when
+					you want your sorting to be case insensitive -->
+				<filter class="solr.LowerCaseFilterFactory" />
+				<!-- The TrimFilter removes any leading or trailing whitespace -->
+				<filter class="solr.TrimFilterFactory" />
+			</analyzer>
+		</fieldType>
+		
+		<fieldType name="text_untokenized_docs" class="solr.TextField"
+			sortMissingLast="true" indexOptions="DOCS">
 			<analyzer type="index">
 				<!-- KeywordTokenizer does no actual tokenizing, so the entire input
 					string is preserved as a single token -->
@@ -535,31 +558,33 @@
 		<fieldType name="search_field_rev" class="solr.TextField"
 			positionIncrementGap="100">
 			<analyzer type="index">
-				<tokenizer class="solr.StandardTokenizerFactory" />
+                <charFilter class="solr.MappingCharFilterFactory"
+                    mapping="mapping-ISOLatin1Accent.txt" />
+				<tokenizer class="solr.PatternTokenizerFactory" pattern="[^A-Za-z0-9_\\-]+" />
 				<filter class="solr.StopFilterFactory" ignoreCase="true"
 					words="lang/stopwords.txt" />
 				<filter class="solr.LowerCaseFilterFactory" />
 				<filter class="solr.ReversedWildcardFilterFactory"
 					withOriginal="true" maxPosAsterisk="3" maxPosQuestion="2"
 					maxFractionAsterisk="0.33" />
-				<charFilter class="solr.MappingCharFilterFactory"
-					mapping="mapping-ISOLatin1Accent.txt" />
 			</analyzer>
 			<analyzer type="query">
-				<tokenizer class="solr.StandardTokenizerFactory" />
+                <charFilter class="solr.MappingCharFilterFactory"
+                    mapping="mapping-ISOLatin1Accent.txt" />
+				<tokenizer class="solr.PatternTokenizerFactory" pattern="[^A-Za-z0-9_\\-]+" />
 				<filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt"
 					ignoreCase="true" expand="true" />
 				<filter class="solr.StopFilterFactory" ignoreCase="true"
 					words="lang/stopwords.txt" />
 				<filter class="solr.LowerCaseFilterFactory" />
-				<charFilter class="solr.MappingCharFilterFactory"
-					mapping="mapping-ISOLatin1Accent.txt" />
 			</analyzer>
 		</fieldType>
 
 		<fieldType name="search_field_rev_de" class="solr.TextField"
 			positionIncrementGap="100">
 			<analyzer type="index">
+                <charFilter class="solr.MappingCharFilterFactory"
+                    mapping="mapping-ISOLatin1Accent.txt" />
 				<tokenizer class="solr.StandardTokenizerFactory" />
 				<filter class="solr.StopFilterFactory" ignoreCase="true"
 					words="lang/stopwords_de.txt" />
@@ -568,10 +593,10 @@
 				<filter class="solr.ReversedWildcardFilterFactory"
 					withOriginal="true" maxPosAsterisk="3" maxPosQuestion="2"
 					maxFractionAsterisk="0.33" />
-				<charFilter class="solr.MappingCharFilterFactory"
-					mapping="mapping-ISOLatin1Accent.txt" />
 			</analyzer>
 			<analyzer type="query">
+                <charFilter class="solr.MappingCharFilterFactory"
+                    mapping="mapping-ISOLatin1Accent.txt" />
 				<tokenizer class="solr.StandardTokenizerFactory" />
 				<filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt"
 					ignoreCase="true" expand="true" />
@@ -579,8 +604,6 @@
 					words="lang/stopwords_de.txt" />
 				<filter class="solr.LowerCaseFilterFactory" />
 				<filter class="solr.GermanStemFilterFactory" />
-				<charFilter class="solr.MappingCharFilterFactory"
-					mapping="mapping-ISOLatin1Accent.txt" />
 			</analyzer>
 		</fieldType>
 

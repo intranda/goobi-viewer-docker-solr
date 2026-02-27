@@ -36,7 +36,7 @@
 
 <!-- PLEASE ADD A CHECKBOX IN THE TICKET TO REMEMBER TO UPDATE THIS FILE IN THE
      GOOBI-VIEWER-DOCKER-SOLR REPOSITORY AS WELL -->
-<schema name="goobi_viewer-20251121" version="1.7">
+<schema name="goobi_viewer-20260227" version="1.7">
 
 
 
@@ -536,7 +536,7 @@
 			<analyzer type="index">
                 <charFilter class="solr.MappingCharFilterFactory"
                     mapping="mapping-ISOLatin1Accent.txt" />
-				<tokenizer class="solr.PatternTokenizerFactory" pattern="[^A-Za-z0-9_\\-]+" />
+				<tokenizer class="solr.PatternTokenizerFactory" pattern="[^A-Za-z0-9_:-]+" />
 				<filter class="solr.StopFilterFactory" ignoreCase="true"
 					words="lang/stopwords.txt" />
 				<filter class="solr.LowerCaseFilterFactory" />
@@ -547,7 +547,7 @@
 			<analyzer type="query">
                 <charFilter class="solr.MappingCharFilterFactory"
                     mapping="mapping-ISOLatin1Accent.txt" />
-				<tokenizer class="solr.PatternTokenizerFactory" pattern="[^A-Za-z0-9_\\-]+" />
+				<tokenizer class="solr.PatternTokenizerFactory" pattern="[^A-Za-z0-9_:-]+" />
 				<filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt"
 					ignoreCase="true" expand="true" />
 				<filter class="solr.StopFilterFactory" ignoreCase="true"

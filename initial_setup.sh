@@ -28,6 +28,18 @@ if [ -z $RESULT ]; then
             sleep 5
         fi
     done
+    while true; do
+        echo "Trying to create Solr collection alias 'current' ..."
+        curl -sf "http://localhost:8983/solr/admin/collections?action=CREATEALIAS&name=current&collections=collection1&wt=xml"
+
+        if [ $? -eq 0 ]; then
+            echo "Solr collection alias successfully created!"
+            break
+        else
+            echo "Error creating Solr collection alias, retrying"
+            sleep 5
+        fi
+    done
 else
     echo "Initial setup skipped due to existing collection"
 fi

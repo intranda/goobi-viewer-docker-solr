@@ -10,15 +10,11 @@ USER 0
 RUN apt-get update && apt-get install -y patch
 RUN chmod a+r /opt/solr/server/lib/jts-core-1.17.0.jar
 
+# cannot add -XX:+ZGenerational to flags since it was introduced in java 21, defaulted in 23 and removed in 24 (implicit, default) but solr 9.8 uses java 17
 ENV SOLR_HEAP="2048m"
-ENV GC_TUNE=" \
-    -XX:+ExplicitGCInvokesConcurrent \
-    -XX:SurvivorRatio=4 \
-    -XX:TargetSurvivorRatio=90 \
-    -XX:MaxTenuringThreshold=8 \
-    -XX:ConcGCThreads=4 -XX:ParallelGCThreads=4 \
-    -XX:PretenureSizeThreshold=64m \
-    -XX:+ParallelRefProcEnabled"
+ENV GC_TUNE="-XX:+UseZGC \
+            -XX:+ExplicitGCInvokesConcurrent \
+            -XX:+AlwaysPreTouch"
 ENV SOLR_LOG_LEVEL="ERROR"
 ENV SOLR_MODULES="analysis-extras"
 
@@ -32,8 +28,10 @@ RUN patch --output /opt/goobiviewer/conf/solrconfig.xml /opt/solr/server/solr/co
 RUN rm /opt/goobiviewer/conf/managed-schema.xml
 RUN rm -r /tmp/patches
 
-USER 8983
 COPY call_initial_setup.sh /docker-entrypoint-initdb.d/
 COPY healthcheck.sh /
 COPY initial_setup.sh /
+COPY run.sh /
 HEALTHCHECK --interval=60s --timeout=15s --start-period=15s --retries=10 CMD [ "/healthcheck.sh" ]
+
+CMD ["/run.sh"]

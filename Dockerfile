@@ -1,4 +1,7 @@
-FROM solr:9.8.0
+# full image used only as a source for the analysis-extras module (the slim image ships no modules)
+FROM solr:9.8.0 AS full
+
+FROM solr:9.8.0-slim
 LABEL org.opencontainers.image.authors="Matthias Geerdsen <matthias.geerdsen@intranda.com>"
 LABEL org.opencontainers.image.source="https://github.com/intranda/goobi-viewer-docker-solr"
 LABEL org.opencontainers.image.description="Goobi viewer - preconfigured Apache Solr"
@@ -9,6 +12,10 @@ ADD https://raw.githubusercontent.com/locationtech/jts/master/LICENSE_EDLv1.txt 
 USER 0
 RUN apt-get update && apt-get install -y patch
 RUN chmod a+r /opt/solr/server/lib/jts-core-1.17.0.jar
+
+# bring in only the analysis-extras module (needed for ICUCollationField in schema.xml)
+COPY --from=full /opt/solr/modules/analysis-extras /opt/solr/modules/analysis-extras
+RUN chmod -R a+r /opt/solr/modules/analysis-extras
 
 # cannot add -XX:+ZGenerational to flags since it was introduced in java 21, defaulted in 23 and removed in 24 (implicit, default) but solr 9.8 uses java 17
 ENV SOLR_HEAP="2048m"
@@ -29,9 +36,7 @@ RUN rm /opt/goobiviewer/conf/managed-schema.xml
 RUN rm -r /tmp/patches
 
 COPY call_initial_setup.sh /docker-entrypoint-initdb.d/
-COPY healthcheck.sh /
-COPY initial_setup.sh /
-COPY run.sh /
+COPY healthcheck.sh initial_setup.sh run.sh /
 HEALTHCHECK --interval=60s --timeout=15s --start-period=15s --retries=10 CMD [ "/healthcheck.sh" ]
 
 CMD ["/run.sh"]

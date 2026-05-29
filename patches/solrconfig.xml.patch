@@ -6,7 +6,63 @@
  
    <!-- Data Directory
  
-@@ -629,7 +630,7 @@
+@@ -122,13 +123,11 @@
+          The default since Lucene 2.3 was the LogByteSizeMergePolicy,
+          Even older versions of Lucene used LogDocMergePolicy.
+       -->
+-    <!--
+-        <mergePolicyFactory class="org.apache.solr.index.TieredMergePolicyFactory">
+-          <int name="maxMergeAtOnce">10</int>
+-          <int name="segmentsPerTier">10</int>
+-          <double name="noCFSRatio">0.1</double>
+-        </mergePolicyFactory>
+-      -->
++    <mergePolicyFactory class="org.apache.solr.index.TieredMergePolicyFactory">
++      <int name="maxMergeAtOnce">5</int>
++      <int name="segmentsPerTier">5</int>
++      <double name="forceMergeDeletesPctAllowed">10.0</double>
++    </mergePolicyFactory>
+ 
+     <!-- Expert: Merge Scheduler
+          The Merge Scheduler in Lucene controls how merges are
+@@ -348,9 +347,9 @@
+                       to occupy. Note that when this option is specified, the size
+                       and initialSize parameters are ignored.
+       -->
+-    <filterCache size="512"
+-                 initialSize="512"
+-                 autowarmCount="0"/>
++    <filterCache size="4096"
++                 initialSize="4096"
++                 autowarmCount="1024"/>
+ 
+     <!-- Query Result Cache
+ 
+@@ -360,9 +359,9 @@
+             maxRamMB - the maximum amount of RAM (in MB) that this cache is allowed
+                        to occupy
+       -->
+-    <queryResultCache size="512"
+-                      initialSize="512"
+-                      autowarmCount="0"/>
++    <queryResultCache size="16384"
++                      initialSize="16384"
++                      autowarmCount="512"/>
+ 
+     <!-- Document Cache
+ 
+@@ -370,8 +369,8 @@
+          document).  Since Lucene internal document ids are transient,
+          this cache will not be autowarmed.
+       -->
+-    <documentCache size="512"
+-                   initialSize="512"
++    <documentCache size="0"
++                   initialSize="0"
+                    autowarmCount="0"/>
+ 
+     <!-- custom cache currently used by block join -->
+@@ -629,7 +628,7 @@
    <!-- Shared parameters for multiple Request Handlers -->
    <initParams path="/update/**,/query,/select,/spell">
      <lst name="defaults">
@@ -15,7 +71,7 @@
      </lst>
    </initParams>
  
-@@ -907,7 +908,7 @@
+@@ -907,7 +906,7 @@
    
  
    <!-- The update.autoCreateFields property can be turned to false to disable schemaless mode -->
